@@ -35,6 +35,7 @@ captures/
 
 # Intellij
 *.iml
+.idea/*
 
 ### Android Patch ###
 gen-external-apklibs
