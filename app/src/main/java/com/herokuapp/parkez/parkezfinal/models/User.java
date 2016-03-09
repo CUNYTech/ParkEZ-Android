@@ -1,22 +1,49 @@
 package com.herokuapp.parkez.parkezfinal.models;
 
-/**
- * Created by pasan_000 on 3/8/2016.
- */
 public class User {
+
     private String uid; // email
     private String token; // token that we use to authenticate
     private String clientId; // client id (multiple clients can use the same token)
     private String expiry; // when this token expires
+    private String name;
 
-    public User(String uid, String token, String clientId, String expiry) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (!getUid().equals(user.getUid())) return false;
+        if (getToken() != null ? !getToken().equals(user.getToken()) : user.getToken() != null)
+            return false;
+        if (!getClientId().equals(user.getClientId())) return false;
+        if (!getExpiry().equals(user.getExpiry())) return false;
+        return getName().equals(user.getName());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getUid().hashCode();
+        result = 31 * result + (getToken() != null ? getToken().hashCode() : 0);
+        result = 31 * result + getClientId().hashCode();
+        result = 31 * result + getExpiry().hashCode();
+        result = 31 * result + getName().hashCode();
+        return result;
+    }
+
+    public User(String uid, String token, String clientId, String expiry, String name) {
         this.uid = uid;
         this.token = token;
         this.clientId = clientId;
         this.expiry = expiry;
+        this.name = name;
     }
 
     public String getUid() {
+
         return uid;
     }
 
@@ -48,27 +75,12 @@ public class User {
         this.expiry = expiry;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        User user = (User) o;
-
-        if (!getUid().equals(user.getUid())) return false;
-        if (!getToken().equals(user.getToken())) return false;
-        if (!getClientId().equals(user.getClientId())) return false;
-        return getExpiry().equals(user.getExpiry());
-
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public int hashCode() {
-        int result = getUid().hashCode();
-        result = 31 * result + getToken().hashCode();
-        result = 31 * result + getClientId().hashCode();
-        result = 31 * result + getExpiry().hashCode();
-        return result;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -78,6 +90,7 @@ public class User {
                 ", token='" + token + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", expiry='" + expiry + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

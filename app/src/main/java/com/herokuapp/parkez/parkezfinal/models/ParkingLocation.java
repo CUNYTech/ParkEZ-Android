@@ -1,14 +1,12 @@
 package com.herokuapp.parkez.parkezfinal.models;
 
-/**
- * Created by pasan_000 on 3/8/2016.
- */
+
+
 public class ParkingLocation {
-    // class members
     private Integer id;
     private Float latitude;
     private Float longitude;
-    private User user;
+    private String status;
 
     public Integer getId() {
         return id;
@@ -34,21 +32,23 @@ public class ParkingLocation {
         this.longitude = longitude;
     }
 
-    public User getUser() {
-        return user;
+    public String getStatus() {
+        return status;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public ParkingLocation(Integer id, Float latitude, Float longitude, User user) {
+
+    public ParkingLocation(Integer id, Float latitude, Float longitude, String status) {
 
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.user = user;
+        this.status = status;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -60,7 +60,7 @@ public class ParkingLocation {
         if (!getId().equals(that.getId())) return false;
         if (!getLatitude().equals(that.getLatitude())) return false;
         if (!getLongitude().equals(that.getLongitude())) return false;
-        return getUser().equals(that.getUser());
+        return getStatus().equals(that.getStatus());
 
     }
 
@@ -69,7 +69,7 @@ public class ParkingLocation {
         int result = getId().hashCode();
         result = 31 * result + getLatitude().hashCode();
         result = 31 * result + getLongitude().hashCode();
-        result = 31 * result + getUser().hashCode();
+        result = 31 * result + getStatus().hashCode();
         return result;
     }
 
@@ -79,7 +79,7 @@ public class ParkingLocation {
                 "id=" + id +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", user=" + user +
+                ", status=" + status +
                 '}';
     }
 }
