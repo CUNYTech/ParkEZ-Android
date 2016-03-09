@@ -12,7 +12,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberPassword"
+        android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/et_email"
         android:hint="email@domain.com"
