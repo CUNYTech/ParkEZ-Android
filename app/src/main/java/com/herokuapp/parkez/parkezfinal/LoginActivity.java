@@ -23,7 +23,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     private EditText email; // email address
     private EditText password; // password
     private Button button; // le login button

@@ -1,6 +1,5 @@
 package com.herokuapp.parkez.parkezfinal;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +23,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SignupActivity extends Activity {
+public class SignupActivity extends BaseActivity {
     private EditText fullName; // password
     private EditText email; // email address
     private EditText password1; // password
@@ -35,6 +34,9 @@ public class SignupActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!isConnected()) {
+            Toast.makeText(getApplicationContext(), "You are not currently connected to the imternetam .", Toast.LENGTH_LONG);
+        }
         setContentView(R.layout.activity_signup);
         fullName = (EditText) findViewById(R.id.et_name);
         email = (EditText) findViewById(R.id.et_email);
@@ -44,11 +46,15 @@ public class SignupActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isConnected()) {
+                    Toast.makeText(getApplicationContext(), "You are not currently connected.", Toast.LENGTH_LONG);
+                    return;
 
-                if(validate()) {
+                }
+                if (validate()) {
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put("name",(Object)fullName.getText().toString());
+                        jsonObject.put("name", (Object) fullName.getText().toString());
                         jsonObject.put("email", (Object) email.getText().toString());
                         jsonObject.put("password", (Object) password1.getText().toString());
                     } catch (JSONException e) {
@@ -89,14 +95,14 @@ public class SignupActivity extends Activity {
 
             private boolean validate() {
                 boolean valid = true;
-                if(!(fullName.length() > 0)) {
+                if (!(fullName.length() > 0)) {
                     fullName.setError("Name is required.");
                     valid = false;
                 }
-                if(!(email.length() > 0)) {
+                if (!(email.length() > 0)) {
                     email.setError("E-mail is required.");
                     valid = false;
-                } else if(!isValidEmail(email.getText().toString())) {
+                } else if (!isValidEmail(email.getText().toString())) {
                     email.setError("Not a valid E-mail");
                     valid = false;
                 }
@@ -114,18 +120,18 @@ public class SignupActivity extends Activity {
                 boolean valid = true;
                 String pw1 = password1.getText().toString();
                 String pw2 = password2.getText().toString();
-                Log.d("[signup]","pw="+pw2+"\n"+"pw2="+pw2);
-                if(pw1.isEmpty()) {
+                Log.d("[signup]", "pw=" + pw2 + "\n" + "pw2=" + pw2);
+                if (pw1.isEmpty()) {
                     password1.setError("Password is required.");
                     valid = false;
                 }
-                if(pw2.isEmpty()) {
+                if (pw2.isEmpty()) {
                     password2.setError("You must confirm your password.");
                     valid = false;
 
                 }
 
-                if(!pw1.matches(pw2)) {
+                if (!pw1.matches(pw2)) {
                     password1.setError("Passwords do not match");
                     password2.setError("Passwords do not match");
                     valid = false;
