@@ -48,6 +48,7 @@ public class LoginActivity extends BaseActivity {
                     password.setError("Password is required.");
                 }
                 Toast.makeText(getApplicationContext(), "Processing Login...", Toast.LENGTH_LONG).show();
+                button.setEnabled(false);
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("email",(Object)userEmail);
@@ -61,6 +62,7 @@ public class LoginActivity extends BaseActivity {
                    @Override
                     public void onFailure(Call call, IOException e) {
                         Log.e("[login api call]",e.getMessage());
+                       button.setEnabled(true);
                     }
 
                     @Override
@@ -70,6 +72,7 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getApplicationContext(),"Username and/or password is incorrect.",Toast.LENGTH_LONG).show();
+                                    button.setEnabled(true);
                                 }
                             });
                         } else {

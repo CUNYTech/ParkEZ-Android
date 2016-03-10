@@ -54,6 +54,7 @@ public class SignupActivity extends BaseActivity {
                 }
                 if (validate()) {
                     Toast.makeText(getApplicationContext(), "Processing Sign-up...", Toast.LENGTH_LONG).show();
+                    button.setEnabled(false);
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("name", (Object) fullName.getText().toString());
@@ -68,6 +69,7 @@ public class SignupActivity extends BaseActivity {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e("[signup]", e.getMessage());
+                            button.setEnabled(true);
                         }
 
                         @Override
@@ -77,6 +79,7 @@ public class SignupActivity extends BaseActivity {
                                     @Override
                                     public void run() {
                                         Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                                        button.setEnabled(true);
                                     }
                                 });
                             } else {
