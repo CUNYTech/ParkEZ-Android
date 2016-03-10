@@ -2,4 +2,11 @@
     <string name="app_name">ParkEZ</string>
     <string name="title_activity_base">BaseActivity</string>
     <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log In</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="email_domain_com">email@domain.com</string>
+    <string name="full_name">Full Name:</string>
+    <string name="email">Email:</string>
+    <string name="re_enter_password">Re-enter Password</string>
 </resources>
