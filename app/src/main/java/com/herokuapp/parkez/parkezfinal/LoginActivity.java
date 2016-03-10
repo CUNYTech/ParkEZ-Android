@@ -57,7 +57,7 @@ public class LoginActivity extends BaseActivity {
                 Request request = WebUtils.getRequest("/auth/sign_in").
                             post(WebUtils.getBody(WebUtils.JSON, jsonObject.toString())).build();
                 client.newCall(request).enqueue(new Callback() {
-                    @Override
+                   @Override
                     public void onFailure(Call call, IOException e) {
                         Log.e("[login api call]",e.getMessage());
                     }

@@ -27,7 +27,14 @@ public class WebUtils {
     public static OkHttpClient getClient() {
         return client;
     }
-
+    /**
+     * Represents the okhttp Call. Will be called asynchronously
+     * @param request the request with all headers filled out
+     * @return a call ready to be passed off.
+     */
+    public static Call initiateAPICall(Request request) {
+        return client.newCall(request);
+    }
     /**
      * Utility function to add headers for auth
      *
