@@ -15,14 +15,14 @@
         android:id="@+id/et_name"
         android:hint="@string/full_name"
         android:layout_marginTop="52dp"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/title_signup"
         android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sign_up"
-        android:id="@+id/textView"
+        android:id="@+id/title_signup"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textSize="45sp" />
@@ -66,9 +66,9 @@
         android:text="@string/sign_up"
         android:id="@+id/btn_signup"
         android:layout_below="@+id/et_pw_confirm"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
+        android:layout_alignLeft="@+id/title_signup"
+        android:layout_alignStart="@+id/title_signup"
         android:layout_marginTop="35dp"
-        android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView" />
+        android:layout_alignRight="@+id/title_signup"
+        android:layout_alignEnd="@+id/title_signup" />
 </RelativeLayout>
