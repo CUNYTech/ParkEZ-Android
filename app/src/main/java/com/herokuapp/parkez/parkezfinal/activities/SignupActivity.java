@@ -36,7 +36,7 @@ public class SignupActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!isConnected()) {
-            Toast.makeText(getApplicationContext(), "You are not currently connected to the imternetam .", Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(), "You are not currently connected to the imternetam .", Toast.LENGTH_LONG).show();
         }
         setContentView(R.layout.activity_signup);
         fullName = (EditText) findViewById(R.id.et_name);
