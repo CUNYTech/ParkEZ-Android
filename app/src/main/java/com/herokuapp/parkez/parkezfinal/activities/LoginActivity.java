@@ -1,6 +1,5 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,6 +47,7 @@ public class LoginActivity extends BaseActivity {
                 if(userPassword.isEmpty() || userPassword.length()<8) {
                     password.setError("Password is required.");
                 }
+                Toast.makeText(getApplicationContext(), "Processing Login...", Toast.LENGTH_LONG).show();
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("email",(Object)userEmail);

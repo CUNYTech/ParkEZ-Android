@@ -53,6 +53,7 @@ public class SignupActivity extends BaseActivity {
 
                 }
                 if (validate()) {
+                    Toast.makeText(getApplicationContext(), "Processing Sign-up...", Toast.LENGTH_LONG).show();
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("name", (Object) fullName.getText().toString());
