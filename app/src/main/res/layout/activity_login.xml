@@ -16,7 +16,7 @@
         android:ems="10"
         android:id="@+id/et_email"
         android:hint="@string/email_domain_com"
-        android:layout_below="@+id/et_login"
+        android:layout_below="@+id/title_login"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="38dp" />
 
@@ -50,14 +50,14 @@
         android:layout_alignLeft="@+id/et_password"
         android:layout_alignStart="@+id/et_password" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/et_login"
+        android:id="@+id/title_login"
+        android:text="@string/log_in"
+        android:textSize="45sp"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/btn_login"
-        android:layout_alignEnd="@+id/btn_login"
-        android:text="@string/log_in"
-        android:textSize="45sp" />
+        android:layout_alignEnd="@+id/btn_login" />
 
 </RelativeLayout>
