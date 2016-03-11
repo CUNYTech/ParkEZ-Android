@@ -10,6 +10,9 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -27,6 +30,10 @@ android {
 dependencies {
     testCompile 'junit:junit:4.12'
 
+
+    // the google play services needed to use google map api
+    // compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
 
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'

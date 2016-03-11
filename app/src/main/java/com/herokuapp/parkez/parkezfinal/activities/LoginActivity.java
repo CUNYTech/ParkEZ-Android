@@ -1,5 +1,6 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.herokuapp.parkez.parkezfinal.MapsActivity;
 import com.herokuapp.parkez.parkezfinal.R;
 import com.herokuapp.parkez.parkezfinal.models.User;
 import com.herokuapp.parkez.parkezfinal.web.utils.WebUtils;
@@ -85,7 +87,9 @@ public class LoginActivity extends BaseActivity {
                                     Toast.makeText(getApplicationContext(), "Logged in",Toast.LENGTH_LONG).show();
                                 }
                             });
-                            // load map here
+                            // load map here when successfully logged in
+                            Intent mapIntent = new Intent(LoginActivity.this, MapsActivity.class);
+                            startActivity(mapIntent);
                         }
                         response.body().close();
                     }

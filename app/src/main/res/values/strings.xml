@@ -9,4 +9,7 @@
     <string name="full_name">Full Name:</string>
     <string name="email">Email:</string>
     <string name="re_enter_password">Re-enter Password</string>
+
+
+    <string name="title_activity_maps">Map</string>
 </resources>
