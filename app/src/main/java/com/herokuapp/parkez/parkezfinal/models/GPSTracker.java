@@ -1,4 +1,4 @@
-package com.herokuapp.parkez.parkezfinal;
+package com.herokuapp.parkez.parkezfinal.models;
 
 /**
  * Created by xsang on 3/11/2016.
