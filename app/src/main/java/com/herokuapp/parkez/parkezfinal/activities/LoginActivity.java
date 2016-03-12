@@ -105,7 +105,6 @@ public class LoginActivity extends BaseActivity {
                                     button.setEnabled(true);
                                 }
                             });
-                            // load map here when successfully logged in
                             // start google map
                             Intent mapIntent = new Intent(LoginActivity.this, MapsActivity.class);
                             startActivity(mapIntent);
