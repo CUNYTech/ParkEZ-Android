@@ -42,6 +42,7 @@ public class SignupActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_port);
 
+
         // check if there is internet connection
         // isConnected is from base activity
         if (!isConnected()) {

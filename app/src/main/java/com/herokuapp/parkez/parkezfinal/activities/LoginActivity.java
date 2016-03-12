@@ -1,6 +1,8 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -93,8 +95,13 @@ public class LoginActivity extends MainActivity {
                                 }
                             });
                         } else {
+                            SharedPreferences.Editor editor = sharedpreferences.edit();// Shared preference
                             User user = WebUtils.getTokenAuthenticationDetails(response); //TODO: persist this.
-
+                            editor.putString(MainActivity.UID,user.getUid());
+                            editor.putString(MainActivity.ClientID,user.getClientId());
+                            editor.putString(MainActivity.TOKEN,user.getToken());
+                            editor.putString(MainActivity.EXPIRY,user.getExpiry());
+                            editor.commit();
                             Log.d("[login]:", user.getToken() + "\n" + user.getClientId());
 
                             LoginActivity.this.runOnUiThread(new Runnable() {
