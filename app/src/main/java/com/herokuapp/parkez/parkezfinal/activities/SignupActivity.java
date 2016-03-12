@@ -25,6 +25,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class SignupActivity extends BaseActivity {
+
     private EditText fullName; // password
     private EditText email; // email address
     private EditText password1; // password
@@ -35,10 +36,16 @@ public class SignupActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!isConnected()) {
-            Toast.makeText(getApplicationContext(), "You are not currently connected to the imternetam .", Toast.LENGTH_LONG).show();
-        }
         setContentView(R.layout.activity_signup);
+
+        // check if there is internet connection
+        // isConnected is from base activity
+        if (!isConnected()) {
+            Toast.makeText(getApplicationContext(), "You are not currently connected to the Internet",
+                    Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Connect to Internet first",
+                    Toast.LENGTH_LONG).show();
+        }
         fullName = (EditText) findViewById(R.id.et_name);
         email = (EditText) findViewById(R.id.et_email);
         password1 = (EditText) findViewById(R.id.et_password);
@@ -47,14 +54,20 @@ public class SignupActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // check the network connection
                 if (!isConnected()) {
-                    Toast.makeText(getApplicationContext(), "You are not currently connected.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "You are not currently connected.",
+                            Toast.LENGTH_LONG);
                     return;
-
                 }
+                // check if all parameters are correctly filled
                 if (validate()) {
-                    Toast.makeText(getApplicationContext(), "Processing Sign-up...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Processing Sign-up...",
+                            Toast.LENGTH_LONG).show();
+
+                    // disable the button so user cannot re-login during the login process
                     button.setEnabled(false);
+
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("name", (Object) fullName.getText().toString());
@@ -78,7 +91,9 @@ public class SignupActivity extends BaseActivity {
                                 SignupActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Something went wrong",
+                                                Toast.LENGTH_LONG).show();
+                                        // enable button after failure
                                         button.setEnabled(true);
                                     }
                                 });
@@ -88,16 +103,21 @@ public class SignupActivity extends BaseActivity {
                                     public void run() {
                                         Intent loginIntent = new Intent(SignupActivity.this, LoginActivity.class);
                                         startActivity(loginIntent);
-                                        Toast.makeText(getApplicationContext(), "Successfully registered. Please Log In.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Successfully registered. Please Log In.",
+                                                Toast.LENGTH_LONG).show();
+                                        // enable button after success
+                                        button.setEnabled(true);
                                     }
                                 });
                                 response.body().close();
                             }
                         }
-                    });
+                    }); // client.newCall
                 }
-            }
+            } // onClick for button
 
+            // check that user info are correctly filled
+            // return false if not filled according to requirement
             private boolean validate() {
                 boolean valid = true;
                 if (!(fullName.length() > 0)) {
@@ -115,12 +135,14 @@ public class SignupActivity extends BaseActivity {
                 return valid;
             }
 
-            // validating email id
+            // validating email id by checking email pattern
             private boolean isValidEmail(String email) {
                 Pattern pattern = Patterns.EMAIL_ADDRESS;
                 return pattern.matcher(email).matches();
             }
 
+            // check to confirm if password is properly filled
+            // return false if two password fields are not same
             private boolean validatePassword() {
                 boolean valid = true;
                 String pw1 = password1.getText().toString();
@@ -144,6 +166,6 @@ public class SignupActivity extends BaseActivity {
                 }
                 return valid;
             }
-        });
-    }
+        }); //onClick
+    } // onCreate
 }

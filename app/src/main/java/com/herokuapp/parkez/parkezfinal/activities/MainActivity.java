@@ -20,6 +20,7 @@ public class MainActivity extends BaseActivity {
         login_btn = (Button) findViewById(R.id.btn_login);
         signup_btn = (Button) findViewById(R.id.btn_signup);
 
+        // listen to login button to enter into login page
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -27,6 +28,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(loginIntent);
             }
         });
+        // listen to sign up button to enter into sign up page
         signup_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
