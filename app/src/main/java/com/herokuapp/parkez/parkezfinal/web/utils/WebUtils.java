@@ -78,6 +78,7 @@ public class WebUtils {
         String token = response.header("Access-Token");
         String clientId = response.header("Client");
         String expiry = response.header("Expiry");
+        String name = response.request().header()
         return new User(uid, token, clientId, expiry, "");
 
     }

@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.herokuapp.parkez.parkezfinal.MapsActivity;
 import com.herokuapp.parkez.parkezfinal.R;
 import com.herokuapp.parkez.parkezfinal.models.User;
 import com.herokuapp.parkez.parkezfinal.web.utils.WebUtils;
