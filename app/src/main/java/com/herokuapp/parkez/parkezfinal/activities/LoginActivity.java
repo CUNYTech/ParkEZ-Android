@@ -26,7 +26,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class LoginActivity extends FragmentActivity {
+public class LoginActivity extends MainActivity {
     private EditText email; // email address
     private EditText password; // password
     private Button button; // le login button

@@ -28,7 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SignupActivity extends FragmentActivity {
+public class SignupActivity extends MainActivity {
 
     private EditText fullName; // password
     private EditText email; // email address

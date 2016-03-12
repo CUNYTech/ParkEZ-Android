@@ -14,7 +14,6 @@ public class MainActivity extends FragmentActivity {
     private Button login_btn = null;
     private Button signup_btn = null;
 
-    Configuration conf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +45,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
     }
+
 
     /*
     // change layout when user switches orientation
