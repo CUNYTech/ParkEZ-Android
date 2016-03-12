@@ -1,22 +1,31 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 
 import com.herokuapp.parkez.parkezfinal.R;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends FragmentActivity {
 
     private Button login_btn = null;
     private Button signup_btn = null;
 
+    Configuration conf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        // check for orientation
+        setContentView(R.layout.activity_main_port);
+        /*
+        if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_main_land);
+        }
+        */
         login_btn = (Button) findViewById(R.id.btn_login);
         signup_btn = (Button) findViewById(R.id.btn_signup);
 
@@ -37,4 +46,20 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+    /*
+    // change layout when user switches orientation
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // check orientation and set the respective layout
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setContentView(R.layout.activity_main_port);
+        }
+        else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_main_land);
+        }
+    }
+    */
 }

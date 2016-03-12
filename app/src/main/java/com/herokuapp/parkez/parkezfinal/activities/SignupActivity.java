@@ -1,7 +1,11 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -24,7 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SignupActivity extends BaseActivity {
+public class SignupActivity extends FragmentActivity {
 
     private EditText fullName; // password
     private EditText email; // email address
@@ -36,7 +40,7 @@ public class SignupActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_signup_port);
 
         // check if there is internet connection
         // isConnected is from base activity
@@ -168,4 +172,14 @@ public class SignupActivity extends BaseActivity {
             }
         }); //onClick
     } // onCreate
+
+    protected  boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
 }

@@ -2,6 +2,7 @@ package com.herokuapp.parkez.parkezfinal.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +26,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends FragmentActivity {
     private EditText email; // email address
     private EditText password; // password
     private Button button; // le login button
@@ -34,7 +35,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_port);
 
         email = (EditText) findViewById(R.id.et_email);
         password = (EditText) findViewById(R.id.et_password);
