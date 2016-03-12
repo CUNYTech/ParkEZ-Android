@@ -94,13 +94,15 @@ public class LoginActivity extends BaseActivity {
                         } else {
                             User user = WebUtils.getTokenAuthenticationDetails(response); //TODO: persist this.
 
-                            Log.d("[login]:",user.getToken()+"\n"+user.getClientId());
+                            Log.d("[login]:", user.getToken() + "\n" + user.getClientId());
 
                             LoginActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getApplicationContext(),
-                                            "Logged in",Toast.LENGTH_LONG).show();
+                                            "Logged in", Toast.LENGTH_LONG).show();
+                                    // enable login button
+                                    button.setEnabled(true);
                                 }
                             });
                             // load map here when successfully logged in
