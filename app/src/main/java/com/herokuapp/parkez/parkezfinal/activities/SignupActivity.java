@@ -2,6 +2,7 @@ package com.herokuapp.parkez.parkezfinal.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.herokuapp.parkez.parkezfinal.R;
+import com.herokuapp.parkez.parkezfinal.models.User;
 import com.herokuapp.parkez.parkezfinal.web.utils.WebUtils;
 
 import org.json.JSONException;
@@ -59,12 +61,7 @@ public class SignupActivity extends MainActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // check the network connection
-                if (!isConnected()) {
-                    Toast.makeText(getApplicationContext(), "You are not currently connected.",
-                            Toast.LENGTH_LONG);
-                    return;
-                }
+
                 // check if all parameters are correctly filled
                 if (validate()) {
                     Toast.makeText(getApplicationContext(), "Processing Sign-up...",
@@ -110,12 +107,10 @@ public class SignupActivity extends MainActivity {
                                         startActivity(loginIntent);
                                         Toast.makeText(getApplicationContext(), "Successfully registered. Please Log In.",
                                                 Toast.LENGTH_LONG).show();
-                                        // enable button after success
-                                        button.setEnabled(true);
                                     }
                                 });
-                                response.body().close();
                             }
+                            response.body().close();
                         }
                     }); // client.newCall
                 }
@@ -174,13 +169,5 @@ public class SignupActivity extends MainActivity {
         }); //onClick
     } // onCreate
 
-    protected  boolean isConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-        return isConnected;
-    }
 }

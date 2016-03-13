@@ -33,11 +33,11 @@ public class LoginActivity extends MainActivity {
     private Button button; // le login button
     private OkHttpClient client = WebUtils.getClient();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_port);
-
         email = (EditText) findViewById(R.id.et_email);
         password = (EditText) findViewById(R.id.et_password);
         button = (Button) findViewById(R.id.btn_login);
@@ -49,10 +49,10 @@ public class LoginActivity extends MainActivity {
                 final String userPassword = password.getText().toString();
 
                 // check for empty fields for email and password
-                if(userEmail.isEmpty()) {
+                if (userEmail.isEmpty()) {
                     email.setError("Email is required to proceed.");
                 }
-                if(userPassword.isEmpty() || userPassword.length()<8) {
+                if (userPassword.isEmpty() || userPassword.length() < 8) {
                     password.setError("Password is required.");
                 }
 
@@ -64,45 +64,39 @@ public class LoginActivity extends MainActivity {
                 // create JSON object
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("email",(Object)userEmail);
-                    jsonObject.put("password",(Object)userPassword);
+                    jsonObject.put("email", (Object) userEmail);
+                    jsonObject.put("password", (Object) userPassword);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 Request request = WebUtils.getRequest("/auth/sign_in").
-                            post(WebUtils.getBody(WebUtils.JSON, jsonObject.toString())).build();
+                        post(WebUtils.getBody(WebUtils.JSON, jsonObject.toString())).build();
                 client.newCall(request).enqueue(new Callback() {
                     // login fails, log the exception
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Log.e("[login api call]",e.getMessage());
-                       button.setEnabled(true);
+                        Log.e("[login api call]", e.getMessage());
+                        button.setEnabled(true);
                     }
 
                     // server responses,
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if(!response.isSuccessful()) {
+                        if (!response.isSuccessful()) {
                             // show message to user
                             LoginActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getApplicationContext(),
-                                            "Username and/or password is incorrect.",Toast.LENGTH_LONG).show();
+                                            "Username and/or password is incorrect.", Toast.LENGTH_LONG).show();
                                     button.setEnabled(true);
                                 }
                             });
                         } else {
-                            SharedPreferences.Editor editor = sharedpreferences.edit();// Shared preference
-                            User user = WebUtils.getTokenAuthenticationDetails(response); //TODO: persist this.
-                            editor.putString(MainActivity.UID,user.getUid());
-                            editor.putString(MainActivity.ClientID,user.getClientId());
-                            editor.putString(MainActivity.TOKEN,user.getToken());
-                            editor.putString(MainActivity.EXPIRY,user.getExpiry());
-                            editor.commit();
-                            Log.d("[login]:", user.getToken() + "\n" + user.getClientId());
 
+                            User user = WebUtils.getTokenAuthenticationDetails(response); //TODO: persist this.
+                            saveUserAuthenticationData(user, getSharedpreferences());
                             LoginActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
