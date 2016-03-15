@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -34,13 +33,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // check for orientation
         setContentView(R.layout.activity_main);
-        /*
-        if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setContentView(R.layout.activity_main);
-        }
-        */
+
         // check the network connection
         sharedpreferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
         login_btn = (Button) findViewById(R.id.btn_login);
@@ -108,21 +102,6 @@ public class MainActivity extends FragmentActivity {
         super.onPause();
     }
 
-    /*
-    // change layout when user switches orientation
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // check orientation and set the respective layout
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setContentView(R.layout.activity_main);
-        }
-        else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setContentView(R.layout.activity_main);
-        }
-    }
-    */
 
     protected void saveUserAuthenticationData(User user, SharedPreferences sharedPreferences) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
