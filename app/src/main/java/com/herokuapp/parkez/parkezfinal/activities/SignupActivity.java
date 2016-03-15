@@ -1,12 +1,7 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -15,7 +10,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.herokuapp.parkez.parkezfinal.R;
-import com.herokuapp.parkez.parkezfinal.models.User;
 import com.herokuapp.parkez.parkezfinal.web.utils.WebUtils;
 
 import org.json.JSONException;
@@ -42,7 +36,7 @@ public class SignupActivity extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup_port);
+        setContentView(R.layout.activity_signup);
 
 
         // check if there is internet connection

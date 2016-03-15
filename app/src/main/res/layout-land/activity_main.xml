@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,24 +7,30 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".activities.MainActivity" >
+    tools:context=".activities.MainActivity">
 
     <Button
         android:layout_width="200dp"
         android:layout_height="80dp"
         android:text="Log In"
         android:id="@+id/btn_login"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/btn_signup"
-        android:layout_alignStart="@+id/btn_signup" />
+        android:layout_toLeftOf="@+id/invisbile_line"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/invisbile_line"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
     <Button
         android:layout_width="200dp"
         android:layout_height="80dp"
         android:text="Sign Up"
         android:id="@+id/btn_signup"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/btn_login" />
-
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/invisbile_line"
+        android:layout_marginLeft="30dp"/>
 </RelativeLayout>

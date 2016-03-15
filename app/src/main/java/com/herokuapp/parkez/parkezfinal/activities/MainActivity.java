@@ -35,10 +35,10 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // check for orientation
-        setContentView(R.layout.activity_main_port);
+        setContentView(R.layout.activity_main);
         /*
         if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setContentView(R.layout.activity_main_land);
+            setContentView(R.layout.activity_main);
         }
         */
         // check the network connection
@@ -116,10 +116,10 @@ public class MainActivity extends FragmentActivity {
 
         // check orientation and set the respective layout
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setContentView(R.layout.activity_main_port);
+            setContentView(R.layout.activity_main);
         }
         else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setContentView(R.layout.activity_main_land);
+            setContentView(R.layout.activity_main);
         }
     }
     */

@@ -4,8 +4,8 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+// import com.google.gson.Gson;
+// import com.google.gson.JsonElement;
 import com.herokuapp.parkez.parkezfinal.activities.SignupActivity;
 import com.herokuapp.parkez.parkezfinal.models.User;
 
