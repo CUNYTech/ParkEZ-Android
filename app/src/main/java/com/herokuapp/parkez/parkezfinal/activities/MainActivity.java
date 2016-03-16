@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         final User user = getUser();
+        Log.d("[main]", user.toString());
         if (user != null) {
             Intent mapIntent = new Intent(MainActivity.this, MapsActivity.class);
             startActivity(mapIntent);
