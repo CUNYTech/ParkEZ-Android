@@ -113,9 +113,9 @@ public class MainActivity extends FragmentActivity {
         editor.putString(EXPIRY, user.getExpiry());
         if (!user.getName().isEmpty()) {
             editor.putString(NAME, user.getName());
-            editor.apply();
-
         }
+        editor.apply();
+
     }
 
     protected User getUser() {
