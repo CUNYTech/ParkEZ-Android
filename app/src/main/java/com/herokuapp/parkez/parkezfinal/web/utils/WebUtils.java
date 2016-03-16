@@ -90,7 +90,9 @@ public class WebUtils {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        return new User(uid, token, clientId, expiry, name);
+        User user = new User(uid, token, clientId, expiry, name);
+        Log.d("[*cries*]", (user.toString()));
+        return user;
 
     }
 
