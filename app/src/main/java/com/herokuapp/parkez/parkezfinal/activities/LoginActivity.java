@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -73,10 +74,8 @@ public class LoginActivity extends MainActivity {
                     // login fails, log the exception
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Log.e("[login api call]", e.getMessage());
                         button.setEnabled(true);
                     }
-
                     // server responses,
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
@@ -91,7 +90,10 @@ public class LoginActivity extends MainActivity {
                                 }
                             });
                         } else {
-
+                            Headers responseHeaders = response.headers();
+                            for (int i = 0; i < responseHeaders.size(); i++) {
+                                Log.d("[login headers]", responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                            }
                             User user = WebUtils.getTokenAuthenticationDetails(response); //TODO: persist this.
                             saveUserAuthenticationData(user, getSharedpreferences());
                             LoginActivity.this.runOnUiThread(new Runnable() {
