@@ -86,7 +86,6 @@ public class WebUtils {
             JSONObject jsonObject = new JSONObject(response.body().string()).getJSONObject("data");
             name = jsonObject.get("name").toString();
             name = name.equals("null") ? "" : name;
-            Log.d("[fuck] ", name);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
