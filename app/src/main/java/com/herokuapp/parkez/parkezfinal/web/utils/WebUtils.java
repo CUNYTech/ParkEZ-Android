@@ -1,7 +1,5 @@
 package com.herokuapp.parkez.parkezfinal.web.utils;
 
-import android.util.Log;
-
 import com.herokuapp.parkez.parkezfinal.models.User;
 
 import org.json.JSONException;
@@ -90,7 +88,6 @@ public class WebUtils {
             e.printStackTrace();
         }
         User user = new User(uid, token, clientId, expiry, name);
-        Log.d("[*cries*]", (user.toString()));
         return user;
 
     }
