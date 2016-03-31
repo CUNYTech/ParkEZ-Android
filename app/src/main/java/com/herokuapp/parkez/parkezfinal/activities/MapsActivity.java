@@ -86,7 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // add a marker to current location and move the camera
         LatLng currentLoc = new LatLng(lat, lng);
-        mMap.addCircle(new CircleOptions().center(currentLoc));
+        mMap.addCircle(new CircleOptions().center(currentLoc)).setRadius(30.0);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
 
         // Add a marker in heraldSquare and move the camera
@@ -116,23 +116,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         MapsActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "Something went horribly wrong..", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Are you connected to the network?", Toast.LENGTH_LONG).show();
                             }
                         });
-
+                        Log.e("[report spot]", "Something went wrong: ", e);
                     }
+
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        MapsActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                LatLng point = locations.get(locations.size() - 1);
-                                mMap.addMarker(new MarkerOptions().position(point)); // add a marker
-                                Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
-                            }
-                        });
+                        if (response.isSuccessful()) {
+                            MapsActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    LatLng point = locations.get(locations.size() - 1);
+                                    mMap.addMarker(new MarkerOptions().position(point)); // add a marker
+                                    Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
+                                }
+                            });
 
+                        } else {
+                            MapsActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
                 });
 
