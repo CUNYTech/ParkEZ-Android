@@ -26,12 +26,12 @@ import okhttp3.Response;
 
 public class SignupActivity extends MainActivity {
 
-    private EditText fullName; // password
+    private EditText fullName; // full name
     private EditText email; // email address
     private EditText password1; // password
     private EditText password2; // password
     private Button button; // le login button
-    private OkHttpClient client = WebUtils.getClient();
+    private OkHttpClient client = WebUtils.getClient(); // le web client
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

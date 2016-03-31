@@ -1,8 +1,11 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -11,7 +14,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.herokuapp.parkez.parkezfinal.R;
@@ -86,9 +88,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // add a marker to current location and move the camera
         LatLng currentLoc = new LatLng(lat, lng);
-        mMap.addCircle(new CircleOptions().center(currentLoc)).setRadius(30.0);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
-
+        mMap.setMyLocationEnabled(true);
         // Add a marker in heraldSquare and move the camera
         /*
         LatLng heraldSquare = new LatLng(40.7496439, -73.9876706);
@@ -143,9 +148,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
+                        response.body().close();
                     }
                 });
-
 
             }
         });
