@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.herokuapp.parkez.parkezfinal.BuildConfig;
 import com.herokuapp.parkez.parkezfinal.R;
 import com.herokuapp.parkez.parkezfinal.models.GPSTracker;
+import com.herokuapp.parkez.parkezfinal.models.ParkingLocation;
 import com.herokuapp.parkez.parkezfinal.models.User;
 import com.herokuapp.parkez.parkezfinal.web.utils.WebUtils;
 
@@ -39,7 +40,7 @@ import okhttp3.Response;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private List<LatLng> locations;
+    private List<LatLng> parkingSpots = new ArrayList<>();
     private OkHttpClient client;
     protected SharedPreferences sharedpreferences;// Shared preference variable
     private static final String USER_PREFS = "USER PREFS";
@@ -52,7 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.locations = new ArrayList<>();
         this.client = WebUtils.getClient();
         sharedpreferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_maps);
@@ -219,6 +219,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 response.body().close();
             }
         });
+    }
+
+    /**
+     * Get the available parking spots
+     *
+     * @param request
+     * @param point
+     * @return
+     */
+    private List<ParkingLocation> getAvailableSpacesNear(Request request, LatLng point) {
+        List<ParkingLocation> parkingLocations = new ArrayList<>();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+            }
+        });
+        return parkingLocations;
     }
 
 }
