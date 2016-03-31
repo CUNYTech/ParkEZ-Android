@@ -168,8 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private Request getRequestForPoint(Request.Builder builder, LatLng point) {
-        Request request = builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point))).build();
-        return request;
+        return builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point))).build();
     }
 
     private void reportSpot(Request request, final LatLng point) {
