@@ -62,15 +62,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onBackPressed() {
-        return; // don't allow back to be pressed.
-    }
 
     /**
      * Manipulates the map once available.
@@ -242,6 +233,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         return parkingLocations;
+    }
+
+    private void checkIn(Marker marker) {
+        marker.setVisible(false);
+        // set the status to occupied for this location.
     }
 
 }
