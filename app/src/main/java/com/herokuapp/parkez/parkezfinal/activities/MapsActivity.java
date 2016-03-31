@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.herokuapp.parkez.parkezfinal.R;
 import com.herokuapp.parkez.parkezfinal.models.GPSTracker;
@@ -89,15 +90,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
         mMap.setMyLocationEnabled(true);
-        // Add a marker in heraldSquare and move the camera
-        /*
-        LatLng heraldSquare = new LatLng(40.7496439, -73.9876706);
-        mMap.addMarker(new MarkerOptions().position(heraldSquare));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(heraldSquare, 15));
-        */
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
@@ -151,6 +145,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
+        //TODO: these are the necessary listeners
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                return true;
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                return false;
+            }
+        });
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
+
+
     }
 
     private User getUser() {
