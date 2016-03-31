@@ -17,6 +17,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.herokuapp.parkez.parkezfinal.BuildConfig;
 import com.herokuapp.parkez.parkezfinal.R;
 import com.herokuapp.parkez.parkezfinal.models.GPSTracker;
 import com.herokuapp.parkez.parkezfinal.models.User;
@@ -61,6 +62,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        return; // don't allow back to be pressed.
+    }
 
     /**
      * Manipulates the map once available.
@@ -72,8 +82,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("parking_locations", getUser());
         mMap = googleMap;
-
         // create gpstracker object
         GPSTracker gpsTracker = new GPSTracker(MapsActivity.this);
 
@@ -94,55 +104,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onMapClick(LatLng point) {
-                locations.add(point); // store the current location
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("latitude", (Object) point.latitude);
-                    jsonObject.put("longitude", (Object) point.longitude);
-                    jsonObject.put("status", "free");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Request request = WebUtils.addTokenAuthHeaders("parking_locations", getUser())
-                        .post(WebUtils.getBody(WebUtils.JSON, jsonObject.toString())).build();
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        MapsActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), "Are you connected to the network?", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        Log.e("[report spot]", "Something went wrong: ", e);
-                    }
-
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            MapsActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    LatLng point = locations.get(locations.size() - 1);
-                                    mMap.addMarker(new MarkerOptions().position(point)); // add a marker
-                                    Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
-                                }
-                            });
-
-                        } else {
-                            MapsActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                        response.body().close();
-                    }
-                });
-
+            public void onMapClick(LatLng latLng) {
+                Request request = getRequestForPoint(requestBuilder, latLng);
+                reportSpot(request, latLng);
+            }
+        });
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                Request request = getRequestForPoint(requestBuilder, latLng);
+                reportSpot(request, latLng);
             }
         });
 
@@ -150,31 +121,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getApplicationContext(), "Marker clicked! " + marker.getPosition().latitude + "," + marker.getPosition().longitude, Toast.LENGTH_LONG).show();
                 return true;
             }
         });
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return false;
-            }
-        });
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
-
+                if (BuildConfig.DEBUG)
+                    Log.i("Marker drag", "start");
             }
 
             @Override
             public void onMarkerDrag(Marker marker) {
-
+                Log.i("Marker drag", marker.getPosition().toString());
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-
+                Log.i("Marker drag", "end");
+                // find the marker with this latitude and update it
+                Log.i("Marker drag", marker.getPosition().toString());
             }
         });
 
@@ -192,6 +161,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             return new User(uid, token, clientId, expiry, name);
         }
+    }
+
+    private String getJSONForRequest(LatLng point) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("latitude", (Object) point.latitude);
+            jsonObject.put("longitude", (Object) point.longitude);
+            jsonObject.put("status", "free");
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Request getRequestForPoint(Request.Builder builder, LatLng point) {
+        Request request = builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point))).build();
+        return request;
+    }
+
+    private void reportSpot(Request request, final LatLng point) {
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MapsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Are you connected to the network?", Toast.LENGTH_LONG).show();
+                    }
+                });
+                Log.e("[report spot]", "Something went wrong: ", e);
+            }
+
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            mMap.addMarker(new MarkerOptions().position(point).draggable(true)); // add a marker
+                            Toast.makeText(getApplicationContext(), "Thank you for helping your community Park EZ!", Toast.LENGTH_LONG).show();
+                            Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
+                        }
+                    });
+
+                } else {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                response.body().close();
+            }
+        });
     }
 
 }
