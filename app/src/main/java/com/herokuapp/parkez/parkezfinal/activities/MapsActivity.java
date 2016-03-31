@@ -2,6 +2,7 @@ package com.herokuapp.parkez.parkezfinal.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -228,7 +229,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-
             }
         });
         return parkingLocations;
@@ -237,6 +237,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void checkIn(Marker marker) {
         marker.setVisible(false);
         // set the status to occupied for this location.
+    }
+
+    private void logout(SharedPreferences preferences, User user) {
+        final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("/auth/sign_out", getUser()).delete();
+        client.newCall(requestBuilder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MapsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Are you connected to the network?", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            sharedpreferences.edit().clear().apply();
+                            Intent loginIntent = new Intent(MapsActivity.this, LoginActivity.class);
+                            startActivity(loginIntent);
+                            Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Invalid credentials.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            ;
+        });
     }
 
 }
