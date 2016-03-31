@@ -29,6 +29,10 @@ public class MainActivity extends FragmentActivity {
     protected static final String NAME = "Name";
     private NetworkStateReceiver receiver;
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
