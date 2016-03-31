@@ -37,9 +37,6 @@ import okhttp3.Response;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private GPSTracker gpsTracker;
-    private double lat;
-    private double lng;
     private List<LatLng> locations;
     private OkHttpClient client;
     protected SharedPreferences sharedpreferences;// Shared preference variable
@@ -77,12 +74,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // create gpstracker object
-        gpsTracker = new GPSTracker(MapsActivity.this);
+        GPSTracker gpsTracker = new GPSTracker(MapsActivity.this);
 
 
         // get current gps coordinates
-        lat = gpsTracker.getLatitude();
-        lng = gpsTracker.getLongitude();
+        double lat = gpsTracker.getLatitude();
+        double lng = gpsTracker.getLongitude();
 
         Log.d("GPS", "" + Double.toString(lat) + " " + Double.toString(lng));
 
