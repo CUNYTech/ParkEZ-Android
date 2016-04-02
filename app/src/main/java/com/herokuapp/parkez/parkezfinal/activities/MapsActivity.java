@@ -74,7 +74,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
+        /*
+        The method finish() takes the user to the login page
+        as it was the previous activity. In the previous page,
+        it shows the user the login form again which disrupts the
+        intuitive flow of the app.
         finish();
+        */
+
+        // goes back to home screen overriding the navigation path
+        // this is to ensure intuitive navigation as back press would
+        // go back to login page asking user input the login info again
+        Intent goBack = new Intent(Intent.ACTION_MAIN);
+        goBack.addCategory(Intent.CATEGORY_HOME);
+        goBack.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(goBack);
     }
 
     /**
