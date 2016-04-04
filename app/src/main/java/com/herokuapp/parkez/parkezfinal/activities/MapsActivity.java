@@ -6,9 +6,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -40,7 +47,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+// import android.support.v4.app.ActivityCompat;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;
     private List<LatLng> parkingSpots = new ArrayList<>();
@@ -52,24 +61,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected static final String TOKEN = "Token";
     protected static final String EXPIRY = "Expiry";
     protected static final String NAME = "Name";
+    private final int SUCCESS_LOGOUT = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.client = WebUtils.getClient();
         sharedpreferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
-        setContentView(R.layout.activity_maps);
+        // set navigation drawer layout with maps fragment included
+        setContentView(R.layout.activity_navigation);
+        // allow toolbar as action
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // create navigation drawer
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Button logoutButton = (Button) findViewById(R.id.btn_logout);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout(sharedpreferences, getUser());
-            }
-        });
+
     }
 
     @Override
@@ -82,13 +100,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         finish();
         */
 
-        // goes back to home screen overriding the navigation path
-        // this is to ensure intuitive navigation as back press would
-        // go back to login page asking user input the login info again
-        Intent goBack = new Intent(Intent.ACTION_MAIN);
-        goBack.addCategory(Intent.CATEGORY_HOME);
-        goBack.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(goBack);
+        // if nav drawer is opened, close it
+        // if not, exit app
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+
+            // goes back to home screen overriding the navigation path
+            // this is to ensure intuitive navigation as back press would
+            // go back to login page asking user input the login info again
+            Intent goBack = new Intent(Intent.ACTION_MAIN);
+            goBack.addCategory(Intent.CATEGORY_HOME);
+            goBack.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(goBack);
+        }
+
     }
 
     /**
@@ -120,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 18));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -140,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Toast.makeText(getApplicationContext(), "Marker clicked! " + marker.getPosition().latitude + "," + marker.getPosition().longitude, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Marker clicked! " + marker.getPosition().latitude + "," + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -221,7 +248,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void run() {
 
                             mMap.addMarker(new MarkerOptions().position(point).draggable(true)); // add a marker
-                            Toast.makeText(getApplicationContext(), "Thank you for helping your community Park EZ!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Thank you for helping your community!", Toast.LENGTH_SHORT).show();
                             Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
                         }
                     });
@@ -286,9 +313,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         @Override
                         public void run() {
                             sharedpreferences.edit().clear().apply();
-                            Intent loginIntent = new Intent(MapsActivity.this, LoginActivity.class);
-                            startActivity(loginIntent);
-                            Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_SHORT).show();
+                            Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
+                            goMainIntent.setFlags(SUCCESS_LOGOUT);
+                            startActivity(goMainIntent);
+                            finish();
                         }
                     });
                 } else {
@@ -299,10 +328,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     });
                 }
-            }
-
-            ;
+            } // onResponse
         });
+    } // user
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.navigation, menu);
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.logout) {
+            logout(sharedpreferences, getUser());
+
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 }

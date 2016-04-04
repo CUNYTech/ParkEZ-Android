@@ -38,7 +38,8 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // check where intent came from
+        checkIntent();
         // check the network connection
         sharedpreferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
         login_btn = (Button) findViewById(R.id.btn_login);
@@ -74,6 +75,19 @@ public class MainActivity extends FragmentActivity {
                 startActivity(signupIntent);
             }
         });
+    }
+
+    private void checkIntent() {
+        // get intent of this instance
+        Intent check = new Intent(this.getIntent());
+        int checkInt = check.getFlags();
+
+        // check if intent came from mapsActivity
+        if (checkInt == 3) {
+            finish();
+        } else {
+            return;
+        }
     }
 
     protected boolean isConnected() {

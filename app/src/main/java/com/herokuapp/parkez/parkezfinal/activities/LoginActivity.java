@@ -55,7 +55,7 @@ public class LoginActivity extends MainActivity {
                 }
 
                 Toast.makeText(getApplicationContext(), "Processing Login...",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
                 // disable button after login click
                 button.setEnabled(false);
 
@@ -100,7 +100,7 @@ public class LoginActivity extends MainActivity {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getApplicationContext(),
-                                            "Logged in", Toast.LENGTH_LONG).show();
+                                            "Logged in", Toast.LENGTH_SHORT).show();
                                     // enable login button
                                     button.setEnabled(true);
                                 }
