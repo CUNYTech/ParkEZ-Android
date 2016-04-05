@@ -14,10 +14,12 @@
         android:layout_height="80dp"
         android:text="Log In"
         android:id="@+id/btn_login"
-        android:layout_marginTop="132dp"
+        android:layout_marginTop="125dp"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/btn_signup"
-        android:layout_alignStart="@+id/btn_signup" />
+        android:layout_alignStart="@+id/btn_signup"
+        android:background="#FFB74D"
+        android:textColor="#FFFF"/>
 
     <Button
         android:layout_width="200dp"
@@ -26,5 +28,7 @@
         android:id="@+id/btn_signup"
         android:layout_marginTop="57dp"
         android:layout_below="@+id/btn_login"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="#FFB74D"
+        android:textColor="#FFFF"/>
 </RelativeLayout>

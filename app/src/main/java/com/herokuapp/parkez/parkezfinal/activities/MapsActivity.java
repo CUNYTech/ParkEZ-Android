@@ -147,7 +147,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 18));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
