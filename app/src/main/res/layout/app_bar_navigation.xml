@@ -31,6 +31,5 @@
 
     <include layout="@layout/content_navigation"/>
 
-
 </FrameLayout>
 <!-- </android.support.design.widget.CoordinatorLayout> -->

@@ -16,7 +16,9 @@
         android:id="@+id/btn_login"
         android:layout_toLeftOf="@+id/invisbile_line"
         android:layout_centerVertical="true"
-        android:layout_marginRight="30dp"/>
+        android:layout_marginRight="30dp"
+        android:background="#FFB74D"
+        android:textColor="#FFFF"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,5 +34,7 @@
         android:id="@+id/btn_signup"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/invisbile_line"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginLeft="30dp"
+        android:background="#FFB74D"
+        android:textColor="#FFFF"/>
 </RelativeLayout>
