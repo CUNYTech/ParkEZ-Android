@@ -267,9 +267,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         List<ParkingLocation> ret;
         Type parkingLocationListType = new TypeToken<Collection<ParkingLocation>>() {
         }.getType();
+        Log.d("[spots json]", json);
         ret = gson.fromJson(json, parkingLocationListType);
         for (ParkingLocation parkingLocation : ret) {
-            Log.d("[spots]", parkingLocation.getLatitude() + "," + parkingLocation.getLongitude());
+            Log.d("[spots]", parkingLocation.toString());
         }
         return ret;
     }
