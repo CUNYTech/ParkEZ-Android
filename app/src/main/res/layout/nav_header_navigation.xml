@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@drawable/ic_acct_circle"
+        android:src="@drawable/ic_parkez_logo2"
         android:id="@+id/imageView" />
 
     <TextView

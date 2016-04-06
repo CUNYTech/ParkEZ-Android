@@ -1,7 +1,9 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -42,6 +44,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -172,8 +175,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //TODO: these are the necessary listeners
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
+            public boolean onMarkerClick(final Marker marker) {
                 Toast.makeText(getApplicationContext(), "Marker clicked! " + marker.getPosition().latitude + "," + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
+                MapsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                        alert.setTitle("ParkEZ parking spot check-in");
+                        alert.setMessage("To complete your check-in, please click \"Ok\", if you changed your mind, click \"Cancel\"");
+
+                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                checkIn(marker);
+                            }
+                        });
+
+                        alert.setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                    }
+                                });
+
+                        alert.show();
+                    }
+                });
                 return true;
             }
         });
@@ -228,6 +253,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
     private Request getRequestToShowAvailableParkingSpotsNear(LatLng latLng) {
         final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("/spots", getUser());
         return requestBuilder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(latLng, ""))).build(); // we ignore the status in this case -- it will not be parsed.
@@ -248,6 +274,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                if (!checkValidityOfSession(response)) {
+                    return;
+                }
                 List<ParkingLocation> availableSpots = getListOfSpots(response.body().string());
                 if (availableSpots.isEmpty()) {
                     MapsActivity.this.runOnUiThread(new Runnable() {
@@ -294,6 +323,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point, status))).build();
     }
 
+    private boolean checkValidityOfSession(Response response) {
+        if (!WebUtils.isAuthenticationValidity(response)) {
+            // clear out login \
+            sharedpreferences.edit().clear().apply();
+            Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
+            goMainIntent.setFlags(SUCCESS_LOGOUT);
+            startActivity(goMainIntent);
+            finish();
+            Toast.makeText(getApplicationContext(), "Login session has expired.", Toast.LENGTH_LONG).show();
+            response.body().close();
+            return false;
+        } else {
+            return true;
+        }
+    }
     private void reportSpot(Request request, final LatLng point) {
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -309,12 +353,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!checkValidityOfSession(response)) {
+                    return;
+                } else if (response.isSuccessful()) {
+                    final String json = response.body().string();
                     MapsActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mMap.addMarker(new MarkerOptions().position(point).draggable(true)); // add a marker
+                            ParkingLocation parkingLocation = deserialize(json);
+                            Marker marker = mMap.addMarker(new MarkerOptions().position(point).draggable(true)); // add a marker
+                            parkingLocationMap.put(marker, parkingLocation);
                             Toast.makeText(getApplicationContext(), "Thank you for helping your community!", Toast.LENGTH_SHORT).show();
                             Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
                         }
@@ -334,9 +383,61 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    private void checkIn(Marker marker) {
-        marker.setVisible(false);
-        // set the status to occupied for this location.
+    private void checkIn(final Marker marker) {
+        final ParkingLocation parkingLocation = parkingLocationMap.get(marker);
+        parkingLocation.setStatus("occupied");
+        String json = serialize(parkingLocation);
+
+        final Request.Builder reqBuilder = WebUtils.addTokenAuthHeaders(String.format(Locale.ENGLISH, "/parking_locations/%d", parkingLocation.getId()), getUser())
+                .patch(WebUtils.getBody(WebUtils.JSON, json));
+        client.newCall(reqBuilder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MapsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Are you connected to the network?", Toast.LENGTH_LONG).show();
+                    }
+                });
+                Log.e("[check in]", "Something went wrong: ", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            marker.setVisible(false);
+                            parkingLocationMap.put(marker, parkingLocation);
+                            Toast.makeText(getApplicationContext(), "You have been checked in.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                } else if (checkValidityOfSession(response)) {
+                    return;
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
+                    Log.e("[check in]", "Something went wrong: ");
+                }
+            }
+        });
+
+    }
+
+    private String serialize(ParkingLocation parkingLocation) {
+        Gson gson = new Gson();
+        Type parkingLocationType = new TypeToken<ParkingLocation>() {
+        }.getType();
+        return gson.toJson(parkingLocation, parkingLocationType);
+    }
+
+    private ParkingLocation deserialize(String json) {
+        Gson gson = new Gson();
+        Type parkingLocationType = new TypeToken<ParkingLocation>() {
+        }.getType();
+        return gson.fromJson(json, parkingLocationType);
     }
 
     private void logout(SharedPreferences preferences, User user) {
@@ -358,12 +459,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     MapsActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            sharedpreferences.edit().clear().apply();
-                            Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_SHORT).show();
-                            Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
-                            goMainIntent.setFlags(SUCCESS_LOGOUT);
-                            startActivity(goMainIntent);
-                            finish();
+                            AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                            alert.setTitle("Do you want to Logout?");
+                            alert.setMessage("Are you sure you want to logout?");
+
+                            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    sharedpreferences.edit().clear().apply();
+                                    Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_SHORT).show();
+                                    Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
+                                    goMainIntent.setFlags(SUCCESS_LOGOUT);
+                                    startActivity(goMainIntent);
+                                    finish();
+                                }
+                            });
+
+                            alert.setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                        }
+                                    });
+
+                            alert.show();
                         }
                     });
                 } else {

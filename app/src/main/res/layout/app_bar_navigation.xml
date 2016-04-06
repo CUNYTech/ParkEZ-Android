@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.xsang.test.NavigationActivity">
+    tools:context=".activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            tools:context="com.example.xsang.test.MapsActivity"/>
+            tools:context="com.herokuapp.parkez.parkezfinal.activities.MapsActivity" />
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_navigation"/>

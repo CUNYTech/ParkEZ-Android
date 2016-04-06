@@ -93,5 +93,10 @@ public class WebUtils {
 
     }
 
+    public static boolean isAuthenticationValidity(Response response) {
+        return response.code() != 401;
+    }
+
+
 
 }
