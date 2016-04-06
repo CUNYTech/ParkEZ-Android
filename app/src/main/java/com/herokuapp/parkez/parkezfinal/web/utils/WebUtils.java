@@ -19,8 +19,7 @@ import okhttp3.Response;
  */
 public class WebUtils {
 
-    //    private static final String BASE_URL = "http://parkez.herokuapp.com/api/v1/"; // base url
-    private static final String BASE_URL = "http://192.168.1.7:3000/api/v1/"; // base url
+    private static final String BASE_URL = "http://parkez.herokuapp.com/api/v1/"; // base url
     private static final OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
