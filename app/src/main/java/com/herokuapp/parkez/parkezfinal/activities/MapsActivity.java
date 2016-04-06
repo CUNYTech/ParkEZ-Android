@@ -151,7 +151,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
-        getAvailableSpacesNear(getRequestToShowAvailableParkingSpotsNear(currentLoc), currentLoc);
+        getAvailableSpacesNear(getRequestToShowAvailableParkingSpotsNear(currentLoc));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -228,10 +228,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Request getRequestToShowAvailableParkingSpotsNear(LatLng latLng) {
         final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("/spots", getUser());
         return requestBuilder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(latLng, ""))).build(); // we ignore the status in this case -- it will not be parsed.
-
     }
 
-    private void getAvailableSpacesNear(Request request, LatLng point) {
+    private void getAvailableSpacesNear(Request request) {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
