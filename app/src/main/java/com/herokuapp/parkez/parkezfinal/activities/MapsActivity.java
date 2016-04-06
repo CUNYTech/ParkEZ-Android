@@ -151,6 +151,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
+
+        //TODO: consider having a button to refresh this and maybe make it "real time"
         getAvailableSpacesNear(getRequestToShowAvailableParkingSpotsNear(currentLoc));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
