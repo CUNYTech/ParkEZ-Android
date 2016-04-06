@@ -39,9 +39,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -54,7 +55,7 @@ import okhttp3.Response;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;
-    private List<LatLng> parkingSpots = new ArrayList<>();
+    private Map<Marker, ParkingLocation> parkingLocationMap = new HashMap<>();
     private OkHttpClient client;
     protected SharedPreferences sharedpreferences;// Shared preference variable
     private static final String USER_PREFS = "USER PREFS";
@@ -282,7 +283,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void run() {
                 for (ParkingLocation parkingLocation : parkingLocations) {
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(parkingLocation.getLatitude(), parkingLocation.getLongitude())).draggable(false));
+                    final Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(parkingLocation.getLatitude(), parkingLocation.getLongitude())).draggable(false));
+                    parkingLocationMap.put(marker, parkingLocation);
                 }
             }
         });
@@ -312,7 +314,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     MapsActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
                             mMap.addMarker(new MarkerOptions().position(point).draggable(true)); // add a marker
                             Toast.makeText(getApplicationContext(), "Thank you for helping your community!", Toast.LENGTH_SHORT).show();
                             Log.d("Reported spot", "" + Double.toString(point.latitude) + " " + Double.toString(point.latitude)); // debuggy the thingy
