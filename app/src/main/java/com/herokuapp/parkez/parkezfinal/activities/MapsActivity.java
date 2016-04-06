@@ -156,15 +156,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Request request = getRequestForPoint(requestBuilder, latLng, "free");
-                reportSpot(request, latLng);
+                reportSpot(getRequestForPoint(requestBuilder, latLng, "free"), latLng);
             }
         });
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                Request request = getRequestForPoint(requestBuilder, latLng, "free");
-                reportSpot(request, latLng);
+                reportSpot(getRequestForPoint(requestBuilder, latLng, "free"), latLng);
             }
         });
 
