@@ -16,8 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,6 +25,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.herokuapp.parkez.parkezfinal.BuildConfig;
 import com.herokuapp.parkez.parkezfinal.R;
 import com.herokuapp.parkez.parkezfinal.models.GPSTracker;
@@ -38,7 +38,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import okhttp3.Call;
@@ -142,24 +144,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // add a marker to current location and move the camera
         LatLng currentLoc = new LatLng(lat, lng);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
+
+        //TODO: consider having a button to refresh this and maybe make it "real time"
+        getAvailableSpacesNear(getRequestToShowAvailableParkingSpotsNear(currentLoc));
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Request request = getRequestForPoint(requestBuilder, latLng);
-                reportSpot(request, latLng);
+                reportSpot(getRequestForPoint(requestBuilder, latLng, "free"), latLng);
             }
         });
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                Request request = getRequestForPoint(requestBuilder, latLng);
-                reportSpot(request, latLng);
+                reportSpot(getRequestForPoint(requestBuilder, latLng, "free"), latLng);
             }
         });
 
@@ -209,12 +214,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private String getJSONForRequest(LatLng point) {
+    private String getJSONForRequest(LatLng point, String status) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("latitude", (Object) point.latitude);
             jsonObject.put("longitude", (Object) point.longitude);
-            jsonObject.put("status", "free");
+            jsonObject.put("status", status);
             return jsonObject.toString();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -222,8 +227,69 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private Request getRequestForPoint(Request.Builder builder, LatLng point) {
-        return builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point))).build();
+    private Request getRequestToShowAvailableParkingSpotsNear(LatLng latLng) {
+        final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("/spots", getUser());
+        return requestBuilder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(latLng, ""))).build(); // we ignore the status in this case -- it will not be parsed.
+    }
+
+    private void getAvailableSpacesNear(Request request) {
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MapsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Are you connected to the network?", Toast.LENGTH_LONG).show();
+                    }
+                });
+                Log.e("[find available spots]", "Something went wrong: ", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                List<ParkingLocation> availableSpots = getListOfSpots(response.body().string());
+                if (availableSpots.isEmpty()) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "There are currently no available spots :'(", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    showSpots(availableSpots);
+                }
+            }
+        });
+    }
+
+    private List<ParkingLocation> getListOfSpots(String json) {
+        // deserialize the list we got from the server
+        Gson gson = new Gson();
+        List<ParkingLocation> ret;
+        Type parkingLocationListType = new TypeToken<Collection<ParkingLocation>>() {
+        }.getType();
+        Log.d("[spots json]", json);
+        ret = gson.fromJson(json, parkingLocationListType);
+        for (ParkingLocation parkingLocation : ret) {
+            Log.d("[spots]", parkingLocation.toString());
+        }
+        return ret;
+    }
+
+    private void showSpots(final List<ParkingLocation> parkingLocations) {
+        // loop through all the locations..
+        MapsActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (ParkingLocation parkingLocation : parkingLocations) {
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(parkingLocation.getLatitude(), parkingLocation.getLongitude())).draggable(false));
+                }
+            }
+        });
+    }
+
+    private Request getRequestForPoint(Request.Builder builder, LatLng point, String status) {
+        return builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point, status))).build();
     }
 
     private void reportSpot(Request request, final LatLng point) {
@@ -266,27 +332,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    /**
-     * Get the available parking spots
-     *
-     * @param request
-     * @param point
-     * @return
-     */
-    private List<ParkingLocation> getAvailableSpacesNear(Request request, LatLng point) {
-        List<ParkingLocation> parkingLocations = new ArrayList<>();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-            }
-        });
-        return parkingLocations;
-    }
 
     private void checkIn(Marker marker) {
         marker.setVisible(false);
