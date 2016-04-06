@@ -51,7 +51,8 @@
         android:layout_alignRight="@+id/title_signup"
         android:layout_alignEnd="@+id/title_signup"
         android:background="#FFB74D"
-        android:textColor="#FFFF"/>
+        android:textColor="#FFFF"
+        android:layout_marginTop="30dp"/>
 
     <EditText
         android:layout_width="match_parent"

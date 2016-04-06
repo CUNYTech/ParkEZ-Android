@@ -15,8 +15,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@drawable/ic_parking"
+        android:src="@drawable/ic_acct_circle"
         android:id="@+id/imageView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/acct_name"
+        android:paddingTop="@dimen/nav_header_vertical_spacing" />
 
 
 </LinearLayout>

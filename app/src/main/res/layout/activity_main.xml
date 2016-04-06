@@ -7,18 +7,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/ic_parkez_logo2"
     tools:context=".activities.MainActivity">
 
     <Button
-        android:layout_width="200dp"
-        android:layout_height="80dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:text="Log In"
         android:id="@+id/btn_login"
         android:background="#FFB74D"
         android:textColor="#FFFF"
-        android:layout_marginBottom="50dp"
-        android:layout_above="@+id/invisbile_line"
-        android:layout_centerHorizontal="true" />
+        android:textSize="20sp"
+        android:layout_alignTop="@+id/btn_signup"
+        android:layout_toLeftOf="@+id/invisbile_line"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="2dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,17 +30,19 @@
         android:id="@+id/invisbile_line"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true" />
 
     <Button
-        android:layout_width="200dp"
-        android:layout_height="80dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:text="Sign Up"
         android:id="@+id/btn_signup"
         android:background="#FFB74D"
         android:textColor="#FFFF"
-        android:layout_below="@id/invisbile_line"
-        android:layout_marginTop="50dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="20sp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/invisbile_line"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="2dp"/>
 </RelativeLayout>

@@ -7,18 +7,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/parkez2logo"
     tools:context=".activities.MainActivity">
 
     <Button
-        android:layout_width="200dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="55dp"
         android:text="Log In"
         android:id="@+id/btn_login"
-        android:layout_toLeftOf="@+id/invisbile_line"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="30dp"
         android:background="#FFB74D"
-        android:textColor="#FFFF"/>
+        android:textColor="#FFFF"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/invisbile_line"
+        android:layout_marginRight="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="20sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -28,13 +32,16 @@
         android:layout_centerVertical="true"/>
 
     <Button
-        android:layout_width="200dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="55dp"
         android:text="Sign Up"
         android:id="@+id/btn_signup"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/invisbile_line"
-        android:layout_marginLeft="30dp"
         android:background="#FFB74D"
-        android:textColor="#FFFF"/>
+        android:textColor="#FFFF"
+        android:layout_alignTop="@+id/btn_login"
+        android:layout_toRightOf="@+id/btn_login"
+        android:layout_marginLeft="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="20sp"/>
 </RelativeLayout>
