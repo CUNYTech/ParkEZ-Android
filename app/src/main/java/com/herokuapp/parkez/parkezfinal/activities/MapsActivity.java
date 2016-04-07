@@ -67,17 +67,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected static final String TOKEN = "Token";
     protected static final String EXPIRY = "Expiry";
     protected static final String NAME = "Name";
+    protected static final String CHECKED_IN = "checked_in";
     private final int SUCCESS_LOGOUT = 3;
+    private boolean checked_in = false;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.client = WebUtils.getClient();
         sharedpreferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+        this.checked_in = sharedpreferences.getBoolean(CHECKED_IN, false);
         // set navigation drawer layout with maps fragment included
         setContentView(R.layout.activity_navigation);
         // allow toolbar as action
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // create navigation drawer
@@ -86,14 +91,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        navigationView.getMenu().findItem(R.id.check_out).setVisible(checked_in);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
 
     @Override
@@ -415,6 +419,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             marker.setVisible(false);
                             parkingLocationMap.put(marker, parkingLocation);
                             Toast.makeText(getApplicationContext(), "You have been checked in.", Toast.LENGTH_LONG).show();
+                            MapsActivity.this.checked_in = true;
+                            navigationView.getMenu().findItem(R.id.check_out).setVisible(true);
+                            sharedpreferences.edit().putBoolean(CHECKED_IN, true).apply();
                         }
                     });
 
@@ -530,16 +537,72 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.logout) {
             logout(sharedpreferences, getUser());
 
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.check_out) {
+            checkOut();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void checkOut() {
+        final Request.Builder reqBuilder = WebUtils.addTokenAuthHeaders("/check_out", getUser())
+                .delete();
+        MapsActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                alert.setTitle("Do you want to Check Out???");
+                alert.setMessage("Are you sure you want to Check out?");
+
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        client.newCall(reqBuilder.build()).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Toast.makeText(getApplicationContext(), "Are you connected???", Toast.LENGTH_LONG).show();
+                                Log.e("[check out]", "Something went wrong", e);
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                if (!checkValidityOfSession(response)) {
+                                    return;
+                                } else if (response.isSuccessful()) {
+                                    MapsActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "Thank you for using ParkEZ, come again!!", Toast.LENGTH_LONG).show();
+                                            MapsActivity.this.checked_in = false;
+                                            ;
+                                            navigationView.getMenu().findItem(R.id.check_out).setVisible(false);
+                                            sharedpreferences.edit().putBoolean(CHECKED_IN, false).apply();
+                                        }
+                                    });
+                                } else {
+                                    Log.d("[check out]", "Something went wrong");
+                                    MapsActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+
+                alert.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        });
+
+                alert.show();
+            }
+        });
+
     }
 }
