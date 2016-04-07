@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ParkEZ</string>
-    <string name="title_activity_base">BaseActivity</string>
+    <string name="title_activity_base">Map</string>
     <string name="sign_up">Sign Up</string>
     <string name="password">Password</string>
     <string name="log_in">Log In</string>
@@ -16,4 +16,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="action_settings">Settings</string>
     <string name="check_out">Check Out</string>
+    <string name="action_refresh_spots">Refresh Spots</string>
 </resources>

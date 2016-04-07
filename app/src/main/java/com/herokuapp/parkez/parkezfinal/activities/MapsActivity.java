@@ -72,6 +72,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean checked_in = false;
     private NavigationView navigationView;
     private Toolbar toolbar;
+    private GPSTracker gpsTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +142,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("parking_locations", getUser());
         mMap = googleMap;
         // create gpstracker object
-        GPSTracker gpsTracker = new GPSTracker(MapsActivity.this);
+        gpsTracker = new GPSTracker(MapsActivity.this);
 
 
         // get current gps coordinates
@@ -559,8 +560,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_refesh_spots) {
+            double lat = gpsTracker.getLatitude();
+            double lng = gpsTracker.getLongitude();
+            mMap.clear();
+            getAvailableSpacesNear(getRequestToShowAvailableParkingSpotsNear(new LatLng(lat, lng)));
         }
 
         return super.onOptionsItemSelected(item);
@@ -598,9 +602,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onClick(DialogInterface dialog, int whichButton) {
                         client.newCall(reqBuilder.build()).enqueue(new Callback() {
                             @Override
-                            public void onFailure(Call call, IOException e) {
-                                Toast.makeText(getApplicationContext(), "Are you connected???", Toast.LENGTH_LONG).show();
-                                Log.e("[check out]", "Something went wrong", e);
+                            public void onFailure(Call call, final IOException e) {
+                                MapsActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Are you connected???", Toast.LENGTH_LONG).show();
+                                        Log.e("[check out]", "Something went wrong", e);
+                                    }
+                                });
+
                             }
 
                             @Override
