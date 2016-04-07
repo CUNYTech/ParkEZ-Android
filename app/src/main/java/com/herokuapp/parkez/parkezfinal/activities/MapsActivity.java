@@ -191,15 +191,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                         alert.setTitle("ParkEZ parking spot check-in");
-                        alert.setMessage("To complete your check-in, please click \"Ok\", if you changed your mind, click \"Cancel\"");
+                        alert.setMessage("Would you like to check-in to this spot?");
 
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 checkIn(marker);
                             }
                         });
 
-                        alert.setNegativeButton("Cancel",
+                        alert.setNegativeButton("No",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                     }
