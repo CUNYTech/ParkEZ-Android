@@ -181,10 +181,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
-                Toast.makeText(getApplicationContext(), "Marker clicked! " + marker.getPosition().latitude + "," + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
                 MapsActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (checked_in) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Already checked in to a spot, you can't be in two places at once!", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                         alert.setTitle("ParkEZ parking spot check-in");
                         alert.setMessage("To complete your check-in, please click \"Ok\", if you changed your mind, click \"Cancel\"");
@@ -211,6 +215,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             ParkingLocation loc = null;
+
             @Override
             public void onMarkerDragStart(Marker marker) {
                 if (BuildConfig.DEBUG)
@@ -248,7 +253,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 if (!checkValidityOfSession(response)) return;
                                 else if (response.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(),
-                                            String.format("Successfully updated the location to %f, %f", marker.getPosition().latitude,
+                                            String.format(Locale.ENGLISH, "Successfully updated the location to %f, %f", marker.getPosition().latitude,
                                                     marker.getPosition().longitude), Toast.LENGTH_LONG).show();
                                     try {
                                         parkingLocationMap.put(marker, deserialize(response.body().string()));
@@ -261,7 +266,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             }
                         });
-
+                        response.body().close();
                     }
                 });
             }
@@ -385,6 +390,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
     }
+
     private void reportSpot(Request request, final LatLng point) {
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -430,8 +436,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+
     private void checkIn(final Marker marker) {
+
         final ParkingLocation parkingLocation = parkingLocationMap.get(marker);
+        ;
         parkingLocation.setStatus("occupied");
         String json = serialize(parkingLocation);
 
@@ -471,8 +480,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
                     Log.e("[check in]", "Something went wrong: ");
                 }
+                response.body().close();
             }
+
         });
+
 
     }
 
@@ -636,7 +648,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
                                         }
                                     });
+
                                 }
+                                response.body().close();
                             }
                         });
                     }
