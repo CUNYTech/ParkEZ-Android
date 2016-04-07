@@ -8,7 +8,7 @@
             android:title="Logout" />
         <item
             android:id="@+id/check_out"
-            android:icon="@drawable/ic_logout"
+            android:icon="@mipmap/ic_exit_to_app_black_24dp"
             android:title="Check Out" />
     </group>
 
