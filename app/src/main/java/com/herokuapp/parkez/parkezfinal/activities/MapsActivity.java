@@ -247,26 +247,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     @Override
                     public void onResponse(Call call, final Response response) throws IOException {
+                        if (!checkValidityOfSession(response)) return;
+                        final String json = response.body().string();
                         MapsActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (!checkValidityOfSession(response)) return;
-                                else if (response.isSuccessful()) {
+                                if (response.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(),
                                             String.format(Locale.ENGLISH, "Successfully updated the location to %f, %f", marker.getPosition().latitude,
                                                     marker.getPosition().longitude), Toast.LENGTH_LONG).show();
-                                    try {
-                                        parkingLocationMap.put(marker, deserialize(response.body().string()));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                    parkingLocationMap.put(marker, deserialize(json));
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                     Log.d("[drag]", "Unable to save");
                                 }
                             }
                         });
-                        response.body().close();
+
                     }
                 });
             }
