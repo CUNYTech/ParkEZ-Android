@@ -323,15 +323,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return builder.post(WebUtils.getBody(WebUtils.JSON, getJSONForRequest(point, status))).build();
     }
 
-    private boolean checkValidityOfSession(Response response) {
+    private boolean checkValidityOfSession(final Response response) {
         if (!WebUtils.isAuthenticationValidity(response)) {
-            // clear out login \
-            sharedpreferences.edit().clear().apply();
-            Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
-            goMainIntent.setFlags(SUCCESS_LOGOUT);
-            startActivity(goMainIntent);
-            finish();
-            Toast.makeText(getApplicationContext(), "Login session has expired.", Toast.LENGTH_LONG).show();
+            MapsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sharedpreferences.edit().clear().apply();
+                    Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
+                    goMainIntent.setFlags(SUCCESS_LOGOUT);
+                    startActivity(goMainIntent);
+                    finish();
+                    Toast.makeText(getApplicationContext(), "Login session has expired.", Toast.LENGTH_LONG).show();
+                }
+            });// clear out login data
             response.body().close();
             return false;
         } else {
