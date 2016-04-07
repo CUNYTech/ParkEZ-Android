@@ -4,8 +4,8 @@ package com.herokuapp.parkez.parkezfinal.models;
 
 public class ParkingLocation {
     private Integer id;
-    private Float latitude;
-    private Float longitude;
+    private Double latitude;
+    private Double longitude;
     private String status;
 
     public Integer getId() {
@@ -16,19 +16,19 @@ public class ParkingLocation {
         this.id = id;
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
@@ -41,7 +41,7 @@ public class ParkingLocation {
     }
 
 
-    public ParkingLocation(Integer id, Float latitude, Float longitude, String status) {
+    public ParkingLocation(Integer id, Double latitude, Double longitude, String status) {
 
         this.id = id;
         this.latitude = latitude;

@@ -209,10 +209,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            ParkingLocation loc = null;
             @Override
             public void onMarkerDragStart(Marker marker) {
                 if (BuildConfig.DEBUG)
                     Log.i("Marker drag", "start");
+                loc = parkingLocationMap.get(marker);
             }
 
             @Override
@@ -221,10 +223,46 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             @Override
-            public void onMarkerDragEnd(Marker marker) {
+            public void onMarkerDragEnd(final Marker marker) {
                 Log.i("Marker drag", "end");
                 // find the marker with this latitude and update it
                 Log.i("Marker drag", marker.getPosition().toString());
+                loc.setLatitude(marker.getPosition().latitude);
+                loc.setLongitude(marker.getPosition().longitude);
+                Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders(String.format("/parking_locations/%d", loc.getId()), getUser())
+                        .patch(WebUtils.getBody(WebUtils.JSON, serialize(loc)));
+
+                client.newCall(requestBuilder.build()).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
+                        Log.e("[drag]", "Something went wrong: ", e);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+                        MapsActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!checkValidityOfSession(response)) return;
+                                else if (response.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(),
+                                            String.format("Successfully updated the location to %f, %f", marker.getPosition().latitude,
+                                                    marker.getPosition().longitude), Toast.LENGTH_LONG).show();
+                                    try {
+                                        parkingLocationMap.put(marker, deserialize(response.body().string()));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                    Log.d("[drag]", "Unable to save");
+                                }
+                            }
+                        });
+
+                    }
+                });
             }
         });
 
