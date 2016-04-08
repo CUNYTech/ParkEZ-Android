@@ -36,9 +36,6 @@ import com.herokuapp.parkez.parkezfinal.models.ParkingLocation;
 import com.herokuapp.parkez.parkezfinal.models.User;
 import com.herokuapp.parkez.parkezfinal.web.utils.WebUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -263,7 +260,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             }
                         });
-
+                        response.body().close();
                     }
                 });
             }
@@ -286,16 +283,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private String getJSONForRequest(LatLng point, String status) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("latitude", (Object) point.latitude);
-            jsonObject.put("longitude", (Object) point.longitude);
-            jsonObject.put("status", status);
-            return jsonObject.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
+        ParkingLocation p = new ParkingLocation(null, point.latitude, point.longitude, status);
+        return serialize(p);
     }
 
 
@@ -333,6 +322,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     showSpots(availableSpots);
                 }
+                response.body().close();
             }
         });
     }
@@ -474,7 +464,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     return;
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Something went wrong...", Toast.LENGTH_LONG).show();
+                        }
+                    });
                     Log.e("[check in]", "Something went wrong: ");
                 }
                 response.body().close();
@@ -499,6 +494,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return gson.fromJson(json, parkingLocationType);
     }
 
+    private void promptforLogout() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+        alert.setTitle("Do you want to Logout?");
+        StringBuilder sb = new StringBuilder("Are you sure you want to logout? ");
+        if (checked_in)
+            sb.append("Doing so will automatically check you out from your parking spot.");
+        alert.setMessage(sb.toString());
+
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                logout();
+            }
+        });
+
+        alert.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+        alert.show();
+
+    }
     private void logout() {
         checkOut(); // logging out will automatically check you out.
         final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("/auth/sign_out", getUser()).delete();
@@ -519,31 +538,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     MapsActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
-                            alert.setTitle("Do you want to Logout?");
-                            StringBuilder sb = new StringBuilder("Are you sure you want to logout? ");
-                            if (checked_in)
-                                sb.append("Doing so will automatically check you out from your parking spot.");
-                            alert.setMessage(sb.toString());
-
-                            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    sharedpreferences.edit().clear().apply();
-                                    Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_SHORT).show();
-                                    Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
-                                    goMainIntent.setFlags(SUCCESS_LOGOUT);
-                                    startActivity(goMainIntent);
-                                    finish();
-                                }
-                            });
-
-                            alert.setNegativeButton("Cancel",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                        }
-                                    });
-
-                            alert.show();
+                            sharedpreferences.edit().clear().apply();
+                            Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_SHORT).show();
+                            Intent goMainIntent = new Intent(MapsActivity.this, MainActivity.class);
+                            goMainIntent.setFlags(SUCCESS_LOGOUT);
+                            startActivity(goMainIntent);
+                            finish();
                         }
                     });
                 } else {
@@ -589,7 +589,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.logout) {
-            logout();
+            promptforLogout();
 
         } else if (id == R.id.check_out) {
             promptCheckOut();
