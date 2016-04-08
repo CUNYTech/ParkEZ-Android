@@ -583,7 +583,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -593,7 +592,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             logout();
 
         } else if (id == R.id.check_out) {
-            promptcheckOut();
+            promptCheckOut();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -601,7 +600,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-    private void promptcheckOut() {
+    private void promptCheckOut() {
         MapsActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
