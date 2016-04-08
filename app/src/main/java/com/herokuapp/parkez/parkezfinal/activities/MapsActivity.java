@@ -57,18 +57,18 @@ import okhttp3.Response;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
-    private GoogleMap mMap;
-    private Map<Marker, ParkingLocation> parkingLocationMap = new HashMap<>();
-    private OkHttpClient client;
-    protected SharedPreferences sharedpreferences;// Shared preference variable
-    private static final String USER_PREFS = "USER PREFS";
     protected static final String UID = "Uid";
     protected static final String ClientID = "Client";
     protected static final String TOKEN = "Token";
     protected static final String EXPIRY = "Expiry";
     protected static final String NAME = "Name";
     protected static final String CHECKED_IN = "checked_in";
+    private static final String USER_PREFS = "USER PREFS";
     private final int SUCCESS_LOGOUT = 3;
+    protected SharedPreferences sharedpreferences;// Shared preference variable
+    private GoogleMap mMap;
+    private Map<Marker, ParkingLocation> parkingLocationMap = new HashMap<>();
+    private OkHttpClient client;
     private boolean checked_in = false;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -521,7 +521,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void run() {
                             AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                             alert.setTitle("Do you want to Logout?");
-                            alert.setMessage("Are you sure you want to logout?");
+                            StringBuilder sb = new StringBuilder("Are you sure you want to logout? ");
+                            if (checked_in)
+                                sb.append("Doing so will automatically check you out from your parking spot.");
+                            alert.setMessage(sb.toString());
 
                             alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
