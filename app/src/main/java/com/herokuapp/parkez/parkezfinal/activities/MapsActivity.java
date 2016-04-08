@@ -452,6 +452,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void run() {
                             marker.setVisible(false);
+                            mMap.clear();
                             parkingLocationMap.put(marker, parkingLocation);
                             Toast.makeText(getApplicationContext(), "You have been checked in.", Toast.LENGTH_LONG).show();
                             MapsActivity.this.checked_in = true;
