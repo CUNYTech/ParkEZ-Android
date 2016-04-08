@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,9 +32,6 @@ public class WebUtils {
      * @return a call ready to be passed off.
      */
 
-    public static Call initiateAPICall(Request request) {
-        return client.newCall(request);
-    }
     /**
      * Utility function to add headers for auth
      *
@@ -89,6 +85,7 @@ public class WebUtils {
             e.printStackTrace();
         }
         User user = new User(uid, token, clientId, expiry, name);
+        response.body().close();
         return user;
 
     }

@@ -89,6 +89,8 @@ public class LoginActivity extends MainActivity {
                                     button.setEnabled(true);
                                 }
                             });
+                            response.body().close();
+
                         } else {
                             Headers responseHeaders = response.headers();
                             for (int i = 0; i < responseHeaders.size(); i++) {
@@ -105,11 +107,12 @@ public class LoginActivity extends MainActivity {
                                     button.setEnabled(true);
                                 }
                             });
+                            response.body().close();
                             // start google map
                             Intent mapIntent = new Intent(LoginActivity.this, MapsActivity.class);
                             startActivity(mapIntent);
                         }
-                        response.body().close();
+
                     }
                 });
             }

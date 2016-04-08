@@ -369,9 +369,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     startActivity(goMainIntent);
                     finish();
                     Toast.makeText(getApplicationContext(), "Login session has expired.", Toast.LENGTH_LONG).show();
+                    response.body().close();
                 }
             });// clear out login data
-            response.body().close();
             return false;
         } else {
             return true;
@@ -553,6 +553,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Toast.makeText(getApplicationContext(), "Invalid credentials.", Toast.LENGTH_LONG).show();
                         }
                     });
+                    response.body().close();
                 }
             } // onResponse
         });
