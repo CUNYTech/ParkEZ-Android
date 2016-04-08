@@ -499,7 +499,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return gson.fromJson(json, parkingLocationType);
     }
 
-    private void logout(SharedPreferences preferences, User user) {
+    private void logout() {
+        checkOut(); // logging out will automatically check you out.
         final Request.Builder requestBuilder = WebUtils.addTokenAuthHeaders("/auth/sign_out", getUser()).delete();
         client.newCall(requestBuilder.build()).enqueue(new Callback() {
             @Override
@@ -586,10 +587,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.logout) {
-            logout(sharedpreferences, getUser());
+            logout();
 
         } else if (id == R.id.check_out) {
-            checkOut();
+            promptcheckOut();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -597,9 +598,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-    private void checkOut() {
-        final Request.Builder reqBuilder = WebUtils.addTokenAuthHeaders("/check_out", getUser())
-                .delete();
+    private void promptcheckOut() {
         MapsActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -609,47 +608,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        client.newCall(reqBuilder.build()).enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, final IOException e) {
-                                MapsActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(), "Are you connected???", Toast.LENGTH_LONG).show();
-                                        Log.e("[check out]", "Something went wrong", e);
-                                    }
-                                });
-
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                if (!checkValidityOfSession(response)) {
-                                    return;
-                                } else if (response.isSuccessful()) {
-                                    MapsActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(getApplicationContext(), "Thank you for using ParkEZ, come again!!", Toast.LENGTH_LONG).show();
-                                            MapsActivity.this.checked_in = false;
-                                            ;
-                                            navigationView.getMenu().findItem(R.id.check_out).setVisible(false);
-                                            sharedpreferences.edit().putBoolean(CHECKED_IN, false).apply();
-                                        }
-                                    });
-                                } else {
-                                    Log.d("[check out]", "Something went wrong");
-                                    MapsActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-
-                                }
-                                response.body().close();
-                            }
-                        });
+                      checkOut();
                     }
                 });
 
@@ -664,4 +623,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
     }
+
+    private void checkOut() {
+        final Request.Builder reqBuilder = WebUtils.addTokenAuthHeaders("/check_out", getUser())
+                .delete();
+        client.newCall(reqBuilder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                MapsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Are you connected???", Toast.LENGTH_LONG).show();
+                        Log.e("[check out]", "Something went wrong", e);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!checkValidityOfSession(response)) {
+                    return;
+                } else if (response.isSuccessful()) {
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Thank you for using ParkEZ, come again!!", Toast.LENGTH_LONG).show();
+                            MapsActivity.this.checked_in = false;
+                            ;
+                            navigationView.getMenu().findItem(R.id.check_out).setVisible(false);
+                            sharedpreferences.edit().putBoolean(CHECKED_IN, false).apply();
+                        }
+                    });
+                } else {
+                    Log.d("[check out]", "Something went wrong");
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+                response.body().close();
+            }
+        });
+    }
+
+
 }
