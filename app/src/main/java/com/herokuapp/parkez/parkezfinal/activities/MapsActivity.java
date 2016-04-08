@@ -584,6 +584,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -656,6 +657,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             ;
                             navigationView.getMenu().findItem(R.id.check_out).setVisible(false);
                             sharedpreferences.edit().putBoolean(CHECKED_IN, false).apply();
+                            getAvailableSpacesNear(getRequestToShowAvailableParkingSpotsNear(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude())));
                         }
                     });
                 } else {
