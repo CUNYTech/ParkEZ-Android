@@ -19,12 +19,14 @@
     <string name="action_refresh_spots">Refresh Spots</string>
     
     <string-array name="pref_list_radius_entries" >
+        <item>0.5 Mile</item>
         <item>1 Mile</item>
         <item>2 Miles</item>
         <item>5 Miles</item>
         <item>10 Miles</item>
     </string-array>
     <string-array name="pref_list_radius_value" >
+        <item>0.5</item>
         <item>1</item>
         <item>2</item>
         <item>5</item>

@@ -5,7 +5,7 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="show_parked_spots"
-        android:title="Show Parked Spots"/>
+        android:title="Show Unavailable Spots"/>
 
     <ListPreference
         android:defaultValue="1"
