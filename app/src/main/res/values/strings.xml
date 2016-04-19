@@ -17,4 +17,18 @@
     <string name="action_settings">Settings</string>
     <string name="check_out">Check Out</string>
     <string name="action_refresh_spots">Refresh Spots</string>
+    
+    <string-array name="pref_list_radius_entries" >
+        <item>1 Mile</item>
+        <item>2 Miles</item>
+        <item>5 Miles</item>
+        <item>10 Miles</item>
+    </string-array>
+    <string-array name="pref_list_radius_value" >
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+    </string-array>
+    
 </resources>

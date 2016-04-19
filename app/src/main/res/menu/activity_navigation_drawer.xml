@@ -10,6 +10,10 @@
             android:id="@+id/check_out"
             android:icon="@mipmap/ic_exit_to_app_black_24dp"
             android:title="Check Out" />
+        <item
+            android:id="@+id/settings"
+            android:title="Settings"
+            android:icon="@drawable/ic_settings_black_24dp"/>
     </group>
 
 </menu>

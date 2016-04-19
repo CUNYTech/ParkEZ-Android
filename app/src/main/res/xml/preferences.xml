@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="show_parked_spots"
+        android:title="Show Parked Spots"/>
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_list_radius_entries"
+        android:entryValues="@array/pref_list_radius_value"
+        android:key="App Radius"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="Increase Search Radius"/>
+
+</PreferenceScreen>

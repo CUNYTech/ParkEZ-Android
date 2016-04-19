@@ -47,6 +47,8 @@
                 android:value="com.herokuapp.parkez.parkezfinal.activities.MainActivity" />
         </activity>
 
+        <activity android:name=".activities.SettingsActivity" />
+
         <!-- the google map api key
              this is needed to use google map methods -->
         <meta-data
