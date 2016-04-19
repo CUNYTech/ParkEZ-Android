@@ -4,7 +4,7 @@
 
     <SwitchPreference
         android:defaultValue="false"
-        android:key="show_parked_spots"
+        android:key="show_unavailable_spots"
         android:title="Show Unavailable Spots"/>
 
     <ListPreference
@@ -14,6 +14,6 @@
         android:key="App Radius"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="Increase Search Radius"/>
+        android:title="Specify Search Radius" />
 
 </PreferenceScreen>
