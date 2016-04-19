@@ -1,10 +1,8 @@
 package com.herokuapp.parkez.parkezfinal.activities;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.herokuapp.parkez.parkezfinal.R;
